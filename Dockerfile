@@ -31,10 +31,13 @@ USER root
 COPY jenkins-agent /usr/local/bin/jenkins-agent
 RUN chmod +x /usr/local/bin/jenkins-agent &&\
     ln -s /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave
-USER ${user}
+
 
 # OCP Specific - See: https://docs.openshift.com/container-platform/4.7/openshift_images/create-images.html#use-uid_create-images
 RUN chgrp -R 0 /home/jenkins && \
     chmod -R g=u /home/jenkins
+
+
+USER ${user}
 
 ENTRYPOINT ["/usr/local/bin/jenkins-agent"]
