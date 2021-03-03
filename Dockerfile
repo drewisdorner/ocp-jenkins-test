@@ -7,10 +7,12 @@ LABEL Description="This is a base image, which allows connecting Jenkins agents 
 ARG AGENT_WORKDIR=/home/jenkins/agent
 ARG JENKINS_HOME=/home/jenkins
 
-RUN yum --disableplugin=subscription-manager -y install curl bash git git-lfs openssh-clients openssl procps buildah \
+RUN yum --disableplugin=subscription-manager -y install curl bash git git-lfs openssh-clients openssl procps \
   && curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
   && chmod 755 /usr/share/jenkins \
   && chmod 644 /usr/share/jenkins/agent.jar \
+  && yum module -y install container-tools \
+  && yum -y install buildah
   && yum --disableplugin=subscription-manager clean -y all
 
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
