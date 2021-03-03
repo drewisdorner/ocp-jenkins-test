@@ -11,7 +11,7 @@ RUN yum --disableplugin=subscription-manager -y install curl bash git git-lfs op
   && curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
   && chmod 755 /usr/share/jenkins \
   && chmod 644 /usr/share/jenkins/agent.jar \
-  && yum --disableplugin=subscription-manager clean all
+  && yum --disableplugin=subscription-manager clean -y all
 
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
 ENV JENKINS_HOME=${JENKINS_HOME}
