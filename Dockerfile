@@ -1,16 +1,9 @@
 FROM adoptopenjdk/openjdk11:alpine
 
-ARG VERSION=4.6
-ARG user=jenkins
-ARG group=jenkins
-ARG uid=1000
-ARG gid=1000
-
-RUN addgroup -g ${gid} ${group}
-RUN adduser -h /home/${user} -u ${uid} -G ${group} -D ${user}
 LABEL Description="This is a base image, which allows connecting Jenkins agents via JNLP protocols" Vendor="Jenkins project" Version="$version"
 
-ARG AGENT_WORKDIR=/home/${user}/agent
+ARG AGENT_WORKDIR=/home/jenkins/agent
+ARG JENKINS_HOME=/home/jenkins
 
 RUN apk add --update --no-cache curl bash git git-lfs openssh-client openssl procps \
   && curl --create-dirs -fsSLo /usr/share/jenkins/agent.jar https://repo.jenkins-ci.org/public/org/jenkins-ci/main/remoting/${VERSION}/remoting-${VERSION}.jar \
@@ -18,26 +11,23 @@ RUN apk add --update --no-cache curl bash git git-lfs openssh-client openssl pro
   && chmod 644 /usr/share/jenkins/agent.jar \
   && ln -sf /usr/share/jenkins/agent.jar /usr/share/jenkins/slave.jar \
   && apk del curl
-USER ${user}
+
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
-RUN mkdir /home/${user}/.jenkins && mkdir -p ${AGENT_WORKDIR}
+ENV JENKINS_HOME=${JENKINS_HOME}
+RUN mkdir -p ${JENKINS_HOME}/.jenkins && mkdir -p ${AGENT_WORKDIR}
 
-VOLUME /home/${user}/.jenkins
+VOLUME ${JENKINS_HOME}/.jenkins
 VOLUME ${AGENT_WORKDIR}
-WORKDIR /home/${user}
+WORKDIR ${JENKINS_HOME}
 
 
-USER root
 COPY jenkins-agent /usr/local/bin/jenkins-agent
 RUN chmod +x /usr/local/bin/jenkins-agent &&\
     ln -s /usr/local/bin/jenkins-agent /usr/local/bin/jenkins-slave
 
-
 # OCP Specific - See: https://docs.openshift.com/container-platform/4.7/openshift_images/create-images.html#use-uid_create-images
-RUN chgrp -R 0 /home/jenkins && \
-    chmod -R g=u /home/jenkins
-
-
-USER ${user}
+RUN chgrp -R 0 ${JENKINS_HOME} && \
+    chmod -R g=u ${JENKINS_HOME}
 
 ENTRYPOINT ["/usr/local/bin/jenkins-agent"]
+
