@@ -2,7 +2,7 @@ FROM adoptopenjdk/openjdk11:ubi
 
 ARG VERSION=4.6
 
-LABEL Description="This is a base image, which allows connecting Jenkins agents via JNLP protocols" Vendor="Jenkins project" Version="$version"
+LABEL Description="This is a base image, which allows connecting Jenkins agents via JNLP protocols" Version="$version"
 
 ARG AGENT_WORKDIR=/home/jenkins/agent
 ARG JENKINS_HOME=/home/jenkins
