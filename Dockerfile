@@ -12,7 +12,7 @@ RUN yum --disableplugin=subscription-manager -y install curl bash git git-lfs op
   && chmod 755 /usr/share/jenkins \
   && chmod 644 /usr/share/jenkins/agent.jar \
   && yum module -y install container-tools \
-  && yum -y install buildah
+  && yum -y install buildah \
   && yum --disableplugin=subscription-manager clean -y all
 
 ENV AGENT_WORKDIR=${AGENT_WORKDIR}
